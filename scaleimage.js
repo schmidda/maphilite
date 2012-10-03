@@ -10,34 +10,34 @@ function getOffsetTopForElem( elem )
 }
 function getBorderValue( elem, prop )
 {
-    var value = getStyleValue( elem, prop );
-    var number = 0;
-    if ( value )
-    {
-        number = parseInt( value );
-        if ( isNaN(number) )
-        {
-            if ( value == "medium" )
-                number = 3;
-            else if ( value == "thick" )
-                number = 6;
-            else if ( value == "thin" )
-                number = 1;
-        }
-    }
-    return number;
+	var value = getStyleValue( elem, prop );
+	var number = 0;
+	if ( value )
+	{
+		number = parseInt( value );
+		if ( isNaN(number) )
+		{
+			if ( value == "medium" )
+				number = 3;
+			else if ( value == "thick" )
+				number = 6;
+			else if ( value == "thin" )
+				number = 1;
+		}
+	}
+	return number;
 }
 function getWindowHeight()
 {
 	var myHeight = 0;
   	if ( typeof( window.innerWidth ) == 'number' )
-	    myHeight = window.innerHeight;
+		myHeight = window.innerHeight;
 	else if ( document.documentElement
 		&& ( document.documentElement.offsetHeight ) )
-    	//IE 6+ in 'standards compliant mode'
+		//IE 6+ in 'standards compliant mode'
 		myHeight = document.documentElement.offsetHeight;
 	else if ( document.body && document.body.offsetHeight )
-        // IE non-compliant mode
+		// IE non-compliant mode
 		myHeight = document.body.offsetHeight;
 	return myHeight;
 }
@@ -62,21 +62,21 @@ function cssToIE( prop )
 }
 function getStyleValue( elem, prop )
 {
-    var value = getStyle( elem, prop );
-    if ( value )
-        return parseInt( value );
-    else
-        return 0;
+	var value = getStyle( elem, prop );
+	if ( value )
+		return parseInt( value );
+	else
+		return 0;
 }
 function getStyle( elem, prop )
 {
-    // test if in IE
-    if ( elem.currentStyle )
-        var y = elem.currentStyle[cssToIE(prop)];
-    else if ( window.getComputedStyle )
-        var y = window.getComputedStyle(elem,null)
-            .getPropertyValue(prop);
-    return y;
+	// test if in IE
+	if ( elem.currentStyle )
+		var y = elem.currentStyle[cssToIE(prop)];
+	else if ( window.getComputedStyle )
+		var y = window.getComputedStyle(elem,null)
+			.getPropertyValue(prop);
+	return y;
 }
 function getFitHeight( elem )
 {
