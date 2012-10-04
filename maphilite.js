@@ -17,10 +17,10 @@
 		mouseLeave: null
 	};
 
-	// assign ourselves to the name "maphilight" within the fn hash
+	// assign ourselves to the name "maphilite" within the fn hash
 	if (!(has_canvas || has_VML)) 
 	{
-		$.fn.maphilight = function() { return this; };
+		$.fn.maphilite = function() { return this; };
 		return;
 	}
 	// if we follow the HTML5 model
@@ -283,7 +283,7 @@
 	{
 		var $area = $(area);
 		// not sure what this does
-		return $.extend({}, options, $.metadata ? $area.metadata() : false, $area.data('maphilight'));
+		return $.extend({}, options, $.metadata ? $area.metadata() : false, $area.data('maphilite'));
 	};
 	/**
 	 * Test if the image has been loaded
@@ -311,10 +311,10 @@
 	 * Main entry point
 	 * @param opts the options passed in
 	 */
-	$.fn.maphilight = function(opts) 
+	$.fn.maphilite = function(opts) 
 	{
 		// add default opts to those passed in
-		opts = $.extend({}, $.fn.maphilight.defaults, opts);
+		opts = $.extend({}, $.fn.maphilite.defaults, opts);
 		if ( opts.mouseEnter )
 			$.mynamespace.mouseEnter = opts.mouseEnter;
 		if ( opts.mouseLeave )
@@ -344,10 +344,10 @@
 				// If the image isn't fully loaded, this won't work right.  Try again later.
 				return window.setTimeout(function() 
 				{
-					img.maphilight(opts);
+					img.maphilite(opts);
 				}, 200);
 			}
-			options = $.extend({}, opts, $.metadata ? img.metadata() : false, img.data('maphilight'));
+			options = $.extend({}, opts, $.metadata ? img.metadata() : false, img.data('maphilite'));
 			// jQuery bug with Opera, results in full-url#usemap being returned from jQuery's attr.
 			// So use raw getAttribute instead.
 			usemap = img.get(0).getAttribute('usemap');
@@ -357,14 +357,14 @@
 			if (!(img.is('img,input[type="image"]') && usemap && map.size() > 0))
 				return;
 			// has the img already been processed? Recalibrate from scratch.
-			if (img.hasClass('maphilighted')) 
+			if (img.hasClass('maphiliteed')) 
 			{
 				// delete existing wrapper div
 				var wrapper = img.parent();
 				img.insertBefore(wrapper);
 				wrapper.remove();
-				// delete maphilight property-sets from map and areas
-				$(map).unbind('.maphilight').find('area[coords]').unbind('.maphilight');
+				// delete maphilite property-sets from map and areas
+				$(map).unbind('.maphilite').find('area[coords]').unbind('.maphilite');
 			}
 			// create an empty div wrapper for img and style it
 			wrap = $('<div></div>').css({
@@ -449,7 +449,7 @@
 				}
 			}
 
-			$(map).bind('alwaysOn.maphilight', function() 
+			$(map).bind('alwaysOn.maphilite', function() 
             {
 				// Check for areas with alwaysOn set. These are added to a *second* canvas,
 				// which will get around flickering during fading.
@@ -481,16 +481,16 @@
 				});
 			});
 			
-			$(map).trigger('alwaysOn.maphilight').find('area[coords]')
-				.bind('mouseover.maphilight', mouseover)
-				.bind('mouseout.maphilight', function(e) { clear_canvas(canvas); });
+			$(map).trigger('alwaysOn.maphilite').find('area[coords]')
+				.bind('mouseover.maphilite', mouseover)
+				.bind('mouseout.maphilite', function(e) { clear_canvas(canvas); });
 			
 			img.before(canvas); // if we put this after, the mouseover events wouldn't fire.
-			img.addClass('maphilighted');
+			img.addClass('maphiliteed');
 		});
 	};
 	// set default options, gets merged into 'options'
-	$.fn.maphilight.defaults = 
+	$.fn.maphilite.defaults = 
 	{
 		fill: true,
 		fillColor: '000000',
