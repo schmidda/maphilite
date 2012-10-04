@@ -12,11 +12,13 @@
 	has_VML = document.namespaces;
 	has_canvas = !!document.createElement('canvas').getContext;
 	$.mynamespace = { 
-		in_focus : null 
+		inFocus : null,
+		mouseEnter: null,
+		mouseLeave: null
 	};
 
 	// assign ourselves to the name "maphilight" within the fn hash
-	if(!(has_canvas || has_VML)) 
+	if (!(has_canvas || has_VML)) 
 	{
 		$.fn.maphilight = function() { return this; };
 		return;
@@ -184,12 +186,11 @@
 		clear_canvas = function(canvas) 
 		{
 			canvas.getContext('2d').clearRect(0, 0, canvas.width,canvas.height);
-			if ( $.mynamespace.in_focus )
+			if ( $.mynamespace.inFocus && $.mynamespace.mouseLeave )
 			{
-				var id = $.mynamespace.in_focus;
-				var span = document.getElementById(id);
-				span.setAttribute("style","background-color: white; border:0");
-				$.mynamespace.in_focus = null;
+				var id = $.mynamespace.inFocus;
+				$.mynamespace.mouseLeave( id );
+				$.mynamespace.inFocus = null;
 			}
 		};
 	} 
@@ -253,6 +254,12 @@
 		clear_canvas = function(canvas) 
 		{
 			$(canvas).find('[name=highlighted]').remove();
+			if ( $.mynamespace.inFocus && $.mynamespace.mouseLeave )
+			{
+				var id = $.mynamespace.inFocus;
+				$.mynamespace.mouseLeave( id );
+				$.mynamespace.inFocus = null;
+			}
 		};
 	}
 	/**
@@ -308,6 +315,10 @@
 	{
 		// add default opts to those passed in
 		opts = $.extend({}, $.fn.maphilight.defaults, opts);
+		if ( opts.mouseEnter )
+			$.mynamespace.mouseEnter = opts.mouseEnter;
+		if ( opts.mouseLeave )
+			$.mynamespace.mouseLeave = opts.mouseLeave;
 		// if we're in IE, set up VML
 		if (!has_canvas && $.browser.msie && !ie_hax_done) 
 		{
@@ -403,13 +414,12 @@
 					var id = $(this).attr("href");
                     if ( id )
 					{
-						id = id.substr(1);
-						var span = document.getElementById( id );
-						if ( span != null )
+						if ( $.mynamespace.mouseEnter )
 						{
-							span.setAttribute("style","background-color: rgba(255,0,0,0.4)");
-							$.mynamespace.in_focus = id;
+							id = id.substr(1);
+							$.mynamespace.mouseEnter(id);
 						}
+						$.mynamespace.inFocus = id;
 					}
                     // this is just if groupBy is set
 					if (area_options.groupBy) 
@@ -494,6 +504,8 @@
 		neverOn: false,
 		groupBy: false,
 		wrapClass: true,
+		mouseEnter: null,
+		mouseLeave: null,
 		// plenty of shadow:
 		shadow: false,
 		shadowX: 0,

@@ -119,12 +119,16 @@ function scaleImage()
 			scaleElement( child, "coords", scale );
 		child = child.nextSibling;
 	}
-// temp code
-/*	var canvas = document.createElement("canvas");
-	canvas.setAttribute("id","example");
-	canvas.setAttribute("width",img.width);
-	canvas.setAttribute("height",img.height);
-	var div = document.getElementById("wrapper");
-	div.appendChild( canvas );
-	alert(getOffsetTopForElem(div));*/
+}
+function onMouseLeave( id )
+{
+	var span = document.getElementById(id);
+	if ( span )
+		span.setAttribute("style","background-color: white; border:0");
+}
+function onMouseEnter( id )
+{
+	var span = document.getElementById( id );
+	if ( span )
+		span.setAttribute("style","background-color: rgba(255,0,0,0.4)");
 }
