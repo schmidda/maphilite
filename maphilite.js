@@ -46,7 +46,6 @@
 			img.parentNode.insertBefore(c,img);
 		else
 			img.parentNode.replaceChild(c,img.previousSibling);
-		alert("create_canvas: c.width="+c.width);
 		c.getContext("2d").clearRect(0, 0, c.width, c.height);
 		return c;
 	};
@@ -62,7 +61,7 @@
 	{
 		x_shift = x_shift || 0;
 		y_shift = y_shift || 0;
-		
+
 		context.beginPath();
 		if (shape == 'rect') 
 		{
@@ -92,7 +91,7 @@
 	 * @param canvas the canvas to draw to
 	 * @param shape the kind of shape (rect, circle...)
 	 * @param coords an array of coordinates
-	 * @param options the options hash
+	 * @param options the are options 
 	 * @param name I think the name of the map
 	 */
 	var add_shape_to = function(canvas, shape, coords, options, name) 
@@ -191,7 +190,7 @@
 	 * @return a 2-array of: normalised shape-name, an array of float coords
 	 */
 	var shape_from_area = function(area) 
-	{
+	{	
 		var i, coords = area.getAttribute('coords').split(',');
 		for (i=0; i < coords.length; i++) 
 				coords[i] = parseFloat(coords[i]);
@@ -205,7 +204,7 @@
 	var options_from_area = function(area, options) 
 	{
 		var $area = $(area);
-		// not sure what this does
+		// add area options
 		return $.extend({}, options, $.metadata ? $area.metadata() : false, $area.data('maphilite'));
 	};
 	/**
@@ -242,9 +241,12 @@
 		if ( opts.mouseLeave )
 			$.fn.maphilite.mouseLeave = opts.mouseLeave;
 		// initialise the images - could be several in the collection
+		if ( !this.length )
+			return;
 		return this.each( function() 
 		{
-			var wrap, options, img, canvas, map, canvas_always, mouseover, highlighted_shape, usemap;
+			var wrap, options, img, canvas, map, canvas_always, mouseover, 
+				hilite_area, clear_area, highlighted_shape, usemap;
 			// the current jQuerified HTMLImage
 			img = $(this);
 			$.fn.maphilite.img = this;
@@ -307,6 +309,34 @@
             // should be the scaled height, width
 			canvas.height = this.height;
 			canvas.width = this.width;
+			/**
+			 * Hilite an area on the canvas
+			 * @param area the HTMLArea object
+			 */
+			hilite_area = function( area )
+			{
+				area_options = options_from_area(this, options);
+				if ( $.fn.maphilite.img.width != canvas.width )
+				{
+					canvas = create_canvas_for($.fn.maphilite.img);
+					$.fn.maphilite.canvas = canvas;
+				}
+				// draw the shape
+				shape = shape_from_area(area);
+				add_shape_to($.fn.maphilite.canvas, shape[0], shape[1], area_options, "highlighted");
+				// record selected span
+				var id = $(area).attr("href");
+				if ( id )
+				{
+					if ( $.fn.maphilite.mouseEnter )
+					{
+						id = id.substr(1);
+						$.fn.maphilite.mouseEnter(id);
+					}
+					$.fn.maphilite.inFocus = id;
+				}
+			}
+			$.fn.maphilite.hiliteArea = hilite_area;
             /**
              * Execute mouseover function on activated areas
              * @param e the mouseover event on an area (this)
@@ -317,25 +347,7 @@
 				area_options = options_from_area(this, options);
 				if (!area_options.neverOn && !area_options.alwaysOn) 
                 {
-					if ( $.fn.maphilite.img.width != canvas.width )
-					{
-						canvas = create_canvas_for($.fn.maphilite.img);
-						$.fn.maphilite.canvas = canvas;
-					}
-					// draw the shape
-					shape = shape_from_area(this);
-					add_shape_to($.fn.maphilite.canvas, shape[0], shape[1], area_options, "highlighted");
-					// record selected span
-					var id = $(this).attr("href");
-                    if ( id )
-					{
-						if ( $.fn.maphilite.mouseEnter )
-						{
-							id = id.substr(1);
-							$.fn.maphilite.mouseEnter(id);
-						}
-						$.fn.maphilite.inFocus = id;
-					}
+					hilite_area( this, area_options );
                     // this is just if groupBy is set
 					if (area_options.groupBy) 
                     {
@@ -360,8 +372,12 @@
 					}
 				}
 			}
-
-			$(map).bind('alwaysOn.maphilite', function() 
+			clear_area = function()
+			{
+				clear_canvas(canvas);
+			}
+			$.fn.maphilite.clearArea = clear_area;
+            $(map).bind('alwaysOn.maphilite', function() 
             {
 				// Check for areas with alwaysOn set. These are added to a *second* canvas,
 				// which will get around flickering during fading.
@@ -392,11 +408,11 @@
 					}
 				});
 			});
-			
+
 			$(map).trigger('alwaysOn.maphilite').find('area[coords]')
 				.bind('mouseover.maphilite', mouseover)
 				.bind('mouseout.maphilite', function(e) { clear_canvas(canvas); });
-			
+
 			img.before(canvas); // if we put this after, the mouseover events wouldn't fire.
 			img.addClass('maphiliteed');
 		});
@@ -429,3 +445,5 @@
 		shadowFrom: false
 	};
 })(jQuery);
+
+

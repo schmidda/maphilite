@@ -234,3 +234,13 @@ function onMouseEnter( id )
 	if ( span )
 		span.setAttribute("style","background-color: rgba(255,0,0,0.4)");
 }
+function onMouseOver( id )
+{
+	var area = $("area[href='#"+id+"']");
+	if ( area )
+		$.fn.maphilite.hiliteArea( area.get(0) );
+}
+function onMouseOut()
+{
+	$.fn.maphilite.clearArea();
+}
